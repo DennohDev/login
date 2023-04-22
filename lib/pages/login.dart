@@ -1,18 +1,72 @@
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:login/components/my_button.dart';
 import 'package:login/components/my_textfield.dart';
 import 'package:login/components/square_tile.dart';
 
-class Login extends StatelessWidget {
-  Login({Key? key}) : super(key: key);
+class Login extends StatefulWidget {
+  const Login({Key? key}) : super(key: key);
 
+  @override
+  State<Login> createState() => _LoginState();
+}
+
+class _LoginState extends State<Login> {
   // Text editing controllers
-  final usernameController = TextEditingController();
+  final emailController = TextEditingController();
+
   final passwordController = TextEditingController();
 
    // Sign user in method
-  void signUserIn() {}
+  void signUserIn() async {
+    // Show a loading circle
+    showDialog(context: context, builder: (context) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    });
+
+    // Try sign in
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: emailController.text,
+        password: passwordController.text,
+      );
+      // pop the loading circle
+      Navigator.pop(context);
+    } on FirebaseAuthException catch (e) {
+      // pop the loading circle
+      Navigator.pop(context);
+      // WRONG EMAIL
+      if (e.code == 'user-not-found') {
+        // show error to user
+        wrongEmailMessage();
+      }
+      // WRONG PASSWORD
+      else if (e.code == 'wrong-password') {
+        // show error to user
+        wrongPasswordMessage();
+      }
+    }
+  }
+
+    // Wrong email message popup
+    void wrongEmailMessage(){
+      showDialog(context: context, builder: (context){
+       return const AlertDialog(title: Text('Incorrect Email'),
+        );
+      });
+    }
+
+    // Wrong password message popup
+    void wrongPasswordMessage(){
+      showDialog(context: context, builder: (context){
+       return const AlertDialog(title: Text('Incorrect Password'),
+        );
+      });
+    }
+
 
   @override
   Widget build(BuildContext context) {
@@ -44,8 +98,8 @@ class Login extends StatelessWidget {
             const SizedBox(height: 25),
             // Username text-field
              MyTextField(
-              controller: usernameController,
-              hintText: 'Username',
+              controller: emailController,
+              hintText: 'Email',
                obscureText: false,
             ),
 
