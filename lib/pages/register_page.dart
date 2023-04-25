@@ -1,25 +1,27 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:login/Services/auth_service.dart';
 import 'package:login/components/my_button.dart';
 import 'package:login/components/my_textfield.dart';
 import 'package:login/components/square_tile.dart';
 
-class Login extends StatefulWidget {
-  const Login({Key? key}) : super(key: key);
+class RegisterPage extends StatefulWidget {
+  final Function()? onTap;
+  const RegisterPage({Key? key, this.onTap}) : super(key: key);
 
   @override
-  State<Login> createState() => _LoginState();
+  State<RegisterPage> createState() => _RegisterPageState();
 }
 
-class _LoginState extends State<Login> {
+class _RegisterPageState extends State<RegisterPage> {
   // Text editing controllers
   final emailController = TextEditingController();
-
   final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
 
-   // Sign user in method
-  void signUserIn() async {
+  // Sign user up method
+  void signUserUp() async {
     // Show a loading circle
     showDialog(context: context, builder: (context) {
       return const Center(
@@ -27,52 +29,53 @@ class _LoginState extends State<Login> {
       );
     });
 
-    // Try sign in
+    // Try Creating the user
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: emailController.text,
-        password: passwordController.text,
-      );
+      // Check if both of the passwords are same
+      if (passwordController == confirmPasswordController) {
+        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: emailController.text,
+          password: passwordController.text,
+        );
+      } else {
+        // show error message, passwords don't match
+        showErrorMessage('Passwords don\'t match');
+      }
       // pop the loading circle
       Navigator.pop(context);
     } on FirebaseAuthException catch (e) {
       // pop the loading circle
       Navigator.pop(context);
       // WRONG EMAIL
-      if (e.code == 'user-not-found') {
-        // show error to user
-        wrongEmailMessage();
-      }
-      // WRONG PASSWORD
-      else if (e.code == 'wrong-password') {
-        // show error to user
-        wrongPasswordMessage();
-      }
+      showErrorMessage(e.code);
     }
   }
 
-    // Wrong email message popup
-    void wrongEmailMessage(){
-      showDialog(context: context, builder: (context){
-       return const AlertDialog(title: Text('Incorrect Email'),
+
+// Error Message to User
+void showErrorMessage(String message){
+  showDialog(
+      context: context,
+      builder: (context){
+        return  AlertDialog(
+          backgroundColor: Colors.deepPurple,
+          title: Center(
+              child: Text(
+                message,
+                style: const TextStyle(color: Colors.white),
+              )),
         );
       });
-    }
-
-    // Wrong password message popup
-    void wrongPasswordMessage(){
-      showDialog(context: context, builder: (context){
-       return const AlertDialog(title: Text('Incorrect Password'),
-        );
-      });
-    }
+}
 
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey[300],
-      body: SafeArea(
+
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    backgroundColor: Colors.grey[300],
+    body: SafeArea(
+      child: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -81,14 +84,14 @@ class _LoginState extends State<Login> {
             //logo
             const Icon(
               Icons.lock,
-              size: 100,
+              size: 50,
             ),
 
             const SizedBox(height: 50),
 
-            // Welcome back you've been missed
+            // Let's create an account
             Text(
-                'Welcome back you\'ve been missed',
+              'Let\'s Create an account for you',
               style: TextStyle(
                 color: Colors.grey[700],
                 fontSize: 16,
@@ -97,10 +100,10 @@ class _LoginState extends State<Login> {
 
             const SizedBox(height: 25),
             // Username text-field
-             MyTextField(
+            MyTextField(
               controller: emailController,
               hintText: 'Email',
-               obscureText: false,
+              obscureText: false,
             ),
 
             const SizedBox(height: 10),
@@ -110,26 +113,22 @@ class _LoginState extends State<Login> {
               hintText: 'Password',
               obscureText: true,
             ),
-
             const SizedBox(height: 10),
-            // Forgot password
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 25.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Text('Forgot Password',
-                    style: TextStyle(color: Colors.grey[600]),
-                  ),
-                ],
-              ),
+            //confirm password text-field
+            MyTextField(
+              controller: confirmPasswordController,
+              hintText: 'Confirm Password',
+              obscureText: true,
             ),
+
+
 
             const SizedBox(height: 25),
             // Sign in Button
             MyButton(
               //TODO: Remember to remove the comments below
-              onTap: signUserIn,
+              onTap: signUserUp,
+              text: 'Sign Up',
             ),
 
             const SizedBox(height: 50),
@@ -166,13 +165,18 @@ class _LoginState extends State<Login> {
             // google + apple sign in buttons
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: const [
+              children: [
                 // Google Button
-                SquareTile(imagePath: 'assets/images/google.png'),
+                SquareTile(imagePath: 'assets/images/google.png',
+                  onTap: () => AuthService().signInWithGoogle(),
+                  ),
 
-                SizedBox(width: 25),
+                const SizedBox(width: 25),
                 // Apple button
-                SquareTile(imagePath: 'assets/images/apple.png')
+                SquareTile(
+                    imagePath: 'assets/images/apple.png',
+                  onTap: () { },
+                )
               ],
             ),
             const SizedBox(height: 50),
@@ -181,20 +185,24 @@ class _LoginState extends State<Login> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text('Not a member?',
+                Text('Already have an Account?',
                   style: TextStyle(color: Colors.grey[700]),
                 ),
                 const SizedBox(width: 4),
-                const Text('Register now',
-                  style: TextStyle(
-                      color: Colors.blue,
-                      fontWeight: FontWeight.bold),
+                GestureDetector(
+                  onTap: widget.onTap,
+                  child: const Text('Login now',
+                    style: TextStyle(
+                        color: Colors.blue,
+                        fontWeight: FontWeight.bold),
+                  ),
                 ),
               ],
             )
           ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }
