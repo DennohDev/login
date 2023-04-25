@@ -38,6 +38,8 @@ dependencies:
   firebase_core: ^2.10.0
   firebase_auth: ^4.4.2
   google_sign_in: ^6.1.0
+  smooth_page_indicator: ^1.1.0
+  lottie: ^2.3.2
 
 dev_dependencies:
   flutter_test:
@@ -93,3 +95,4 @@ flutter:
   # see https://flutter.dev/custom-fonts/#from-packages
   assets:
     - assets/images/
+    - assets/animations/

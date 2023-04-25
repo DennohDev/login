@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:login/pages/auth_page.dart';
+import 'package:login/pages/Intro_Screens/on_boarding_screen.dart';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
@@ -19,7 +20,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: AuthPage(),
+      home: OnBoardingScreen(),
     );
   }
 }
