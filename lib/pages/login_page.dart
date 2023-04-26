@@ -33,10 +33,10 @@ class Login extends StatefulWidget {
     // Try sign in
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: emailController.text,
-        password: passwordController.text,
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
       );
-      // pop the loading circle
+      //Pop the loading circle
       Navigator.pop(context);
     } on FirebaseAuthException catch (e) {
       // pop the loading circle
@@ -44,6 +44,8 @@ class Login extends StatefulWidget {
       // WRONG EMAIL
       showErrorMessage(e.code);
       }
+
+
     }
 
 
@@ -126,7 +128,6 @@ class Login extends StatefulWidget {
               const SizedBox(height: 25),
               // Sign in Button
               MyButton(
-                //TODO: Remember to remove the comments below
                 onTap: signUserIn,
                 text: 'Sign Up',
               ),
@@ -173,10 +174,6 @@ class Login extends StatefulWidget {
                   ),
 
                   SizedBox(width: 25),
-                  // Apple button
-                  SquareTile(
-                    imagePath: 'assets/images/apple.png',
-                    onTap: () {  },)
                 ],
               ),
               const SizedBox(height: 50),

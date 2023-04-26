@@ -22,35 +22,33 @@ class _RegisterPageState extends State<RegisterPage> {
 
   // Sign user up method
   void signUserUp() async {
-    // Show a loading circle
-    showDialog(context: context, builder: (context) {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
-    });
-
     // Try Creating the user
     try {
       // Check if both of the passwords are same
-      if (passwordController == confirmPasswordController) {
+      if (passwordConfirmed()) {
         await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: emailController.text,
-          password: passwordController.text,
+          email: emailController.text.trim(),
+          password: passwordController.text.trim(),
         );
+
       } else {
         // show error message, passwords don't match
         showErrorMessage('Passwords don\'t match');
       }
-      // pop the loading circle
-      Navigator.pop(context);
+
     } on FirebaseAuthException catch (e) {
-      // pop the loading circle
-      Navigator.pop(context);
       // WRONG EMAIL
       showErrorMessage(e.code);
     }
   }
-
+  bool passwordConfirmed() {
+    if (passwordController.text.trim() ==
+        confirmPasswordController.text.trim()) {
+      return true;
+    } else {
+      return false;
+    }
+}
 
 // Error Message to User
 void showErrorMessage(String message){
@@ -67,6 +65,7 @@ void showErrorMessage(String message){
         );
       });
 }
+
 
 
 
@@ -170,13 +169,6 @@ Widget build(BuildContext context) {
                 SquareTile(imagePath: 'assets/images/google.png',
                   onTap: () => AuthService().signInWithGoogle(),
                   ),
-
-                const SizedBox(width: 25),
-                // Apple button
-                SquareTile(
-                    imagePath: 'assets/images/apple.png',
-                  onTap: () { },
-                )
               ],
             ),
             const SizedBox(height: 50),
