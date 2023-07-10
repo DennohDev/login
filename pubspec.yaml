@@ -40,6 +40,18 @@ dependencies:
   google_sign_in: ^6.1.0
   smooth_page_indicator: ^1.1.0
   lottie: ^2.3.2
+  fluttertoast: ^8.2.2
+  flutter_phone_direct_caller: ^2.1.1
+  permission_handler: ^10.3.0
+  cloud_firestore: ^4.8.1
+  flutter_local_notifications: ^14.1.1
+  firebase_messaging: ^14.6.3
+  http: ^0.13.0
+  overlay_support: ^2.1.0
+  image_picker: ^1.0.0
+  firebase_storage: ^11.2.3
+  geocoding: ^2.1.0
+  geolocator: ^9.0.2
 
 dev_dependencies:
   flutter_test:

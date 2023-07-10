@@ -1,6 +1,6 @@
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:login/components/my_button.dart';
 import 'package:login/components/my_textfield.dart';
 import 'package:login/components/square_tile.dart';
@@ -15,20 +15,22 @@ class Login extends StatefulWidget {
   State<Login> createState() => _LoginState();
 }
 
- class _LoginState extends State<Login> {
+class _LoginState extends State<Login> {
   // Text editing controllers
   final emailController = TextEditingController();
 
   final passwordController = TextEditingController();
 
-   // Sign user in method
+  // Sign user in method
   void signUserIn() async {
     // Show a loading circle
-    showDialog(context: context, builder: (context) {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
-    });
+    showDialog(
+        context: context,
+        builder: (context) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        });
 
     // Try sign in
     try {
@@ -43,29 +45,13 @@ class Login extends StatefulWidget {
       Navigator.pop(context);
       // WRONG EMAIL
       showErrorMessage(e.code);
-      }
-
-
     }
+  }
 
-
-    // Error Message to User
-    void showErrorMessage(String message){
-      showDialog(
-          context: context,
-          builder: (context){
-       return  AlertDialog(
-         backgroundColor: Colors.deepPurple,
-         title: Center(
-             child: Text(
-                 message,
-               style: const TextStyle(color: Colors.white),
-             )),
-        );
-      });
-    }
-
-
+  // Error Message to User
+  void showErrorMessage(String message) {
+    Fluttertoast.showToast(msg: message);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -79,16 +65,17 @@ class Login extends StatefulWidget {
               const SizedBox(height: 50),
 
               //logo
-              const Icon(
-                Icons.lock,
-                size: 100,
+              Image.asset(
+                'assets/images/kenya.png',
+                width: 100,
+                height: 100,
               ),
 
               const SizedBox(height: 50),
 
               // Welcome back you've been missed
               Text(
-                  'Welcome back you\'ve been missed',
+                'Welcome back',
                 style: TextStyle(
                   color: Colors.grey[700],
                   fontSize: 16,
@@ -97,10 +84,10 @@ class Login extends StatefulWidget {
 
               const SizedBox(height: 25),
               // Username text-field
-               MyTextField(
+              MyTextField(
                 controller: emailController,
                 hintText: 'Email',
-                 obscureText: false,
+                obscureText: false,
               ),
 
               const SizedBox(height: 10),
@@ -118,9 +105,10 @@ class Login extends StatefulWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Text('Forgot Password',
-                      style: TextStyle(color: Colors.grey[600]),
-                    ),
+                    // Text(
+                    //   'Forgot Password',
+                    //   style: TextStyle(color: Colors.grey[600]),
+                    // ),
                   ],
                 ),
               ),
@@ -132,7 +120,7 @@ class Login extends StatefulWidget {
                 text: 'Sign Up',
               ),
 
-              const SizedBox(height: 50),
+              const SizedBox(height: 20),
               // or Continue with
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 25.0),
@@ -161,7 +149,7 @@ class Login extends StatefulWidget {
                 ),
               ),
 
-              const SizedBox(height: 50),
+              const SizedBox(height: 20),
 
               // google + apple sign in buttons
               Row(
@@ -169,7 +157,7 @@ class Login extends StatefulWidget {
                 children: [
                   // Google Button
                   SquareTile(
-                      imagePath: 'assets/images/google.png',
+                    imagePath: 'assets/images/google.png',
                     onTap: () => AuthService().signInWithGoogle(),
                   ),
 
@@ -182,16 +170,17 @@ class Login extends StatefulWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text('Not a member?',
+                  Text(
+                    'Not a member?',
                     style: TextStyle(color: Colors.grey[700]),
                   ),
                   const SizedBox(width: 4),
                   GestureDetector(
                     onTap: widget.onTap,
-                    child: const Text('Register now',
+                    child: const Text(
+                      'Register now',
                       style: TextStyle(
-                          color: Colors.blue,
-                          fontWeight: FontWeight.bold),
+                          color: Colors.blue, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ],
